@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Parsing Example</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+  </style>
+  <script>
+    function parseData() {
+      var rawData = document.getElementById("dataInput").value;
+
+      // 解析数据并提取Credit和Mark
+      var dataRows = rawData.split("\n"); // 假设每行数据以换行符分隔
+      var credits = [];
+      var marks = [];
+      var results = []; // 添加结果数组
+
+      for (var i = 0; i < dataRows.length; i++) {
+        var rowData = dataRows[i].split("\t"); // 假设数据列以制表符分隔
+        var credit = parseFloat(rowData[4]); // Credit列索引为4
+        var mark = parseFloat(rowData[5]); // Mark列索引为5
+
+        // 检查是否为有效数字，如果不是则将其设置为0
+        if (isNaN(credit)) {
+          credit = 0;
+        }
+        if (isNaN(mark)) {
+          mark = 0;
+        }
+
+        credits.push(credit);
+        marks.push(mark);
+        results.push((credit * mark).toFixed(2)); // 计算并存储result的值
+      }
+
+      // 创建列表格
+      var table = document.createElement("table");
+      var tableHead = document.createElement("thead");
+      var tableHeadRow = document.createElement("tr");
+      var tableBody = document.createElement("tbody");
+
+      var creditHeadCell = document.createElement("th");
+      creditHeadCell.textContent = "Credit";
+      tableHeadRow.appendChild(creditHeadCell);
+
+      var markHeadCell = document.createElement("th");
+      markHeadCell.textContent = "Mark";
+      tableHeadRow.appendChild(markHeadCell);
+
+      var resultHeadCell = document.createElement("th");
+      resultHeadCell.textContent = "Result";
+      tableHeadRow.appendChild(resultHeadCell);
+
+      for (var i = 0; i < credits.length; i++) {
+        var creditCell = document.createElement("td");
+        creditCell.textContent = credits[i];
+
+        var markCell = document.createElement("td");
+        markCell.textContent = marks[i];
+
+        var resultCell = document.createElement("td");
+        resultCell.textContent = results[i]; // 使用结果数组中的值
+
+        var row = document.createElement("tr");
+        row.appendChild(creditCell);
+        row.appendChild(markCell);
+        row.appendChild(resultCell);
+
+        tableBody.appendChild(row);
+      }
+
+      tableHead.appendChild(tableHeadRow);
+      table.appendChild(tableHead);
+      table.appendChild(tableBody);
+
+      // 计算结果
+      var resultSum = results.reduce(function (acc, curr) { // 使用results数组计算结果和
+        return isNaN(curr) ? acc : acc + parseFloat(curr);
+      }, 0);
+
+      var creditSum = credits.reduce(function (acc, curr) {
+        return isNaN(curr) ? acc : acc + curr;
+      }, 0);
+
+      var resultAvg = creditSum !== 0 ? (resultSum / creditSum).toFixed(2) : 0;
+
+      var resultSumContainer = document.createElement("div");
+      resultSumContainer.textContent = "Sum of Results: " + resultSum.toFixed(2);
+
+      var creditSumContainer = document.createElement("div");
+      creditSumContainer.textContent = "Sum of Credits: " + creditSum.toFixed(2);
+
+      // 添加结果显示
+      var resultContainer = document.getElementById("resultContainer");
+      resultContainer.innerHTML = ""; // 清空容器
+      resultContainer.appendChild(table);
+
+      var resultText = document.createElement("p");
+      resultText.textContent = "Average Result: " + resultAvg;
+      resultContainer.appendChild(resultText);
+      resultContainer.appendChild(resultSumContainer);
+      resultContainer.appendChild(creditSumContainer);
+    }
+  </script>
+</head>
+<body>
+  <textarea id="dataInput" rows="10" cols="50"></textarea>
+  <br>
+  <button onclick="parseData()">提取数据</button>
+  <br>
+  <div id="resultContainer"></div>
+</body>
+</html>
